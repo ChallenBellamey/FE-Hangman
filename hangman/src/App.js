@@ -10,6 +10,13 @@ import LetterInput from './components/LetterInput';
 import LetterSubmitButton from './components/LetterSubmitButton';
 
 class App extends Component {
+  state = {
+    wordInput: '',
+    word: [],
+    wordDisplay: [],
+    guessedChars: [],
+    hangmanState: 0
+  }
 
   render() {
     return (
@@ -17,23 +24,39 @@ class App extends Component {
         <div className='App-header'>
           <div >
             <Header />
-            <WordInput />
-            <NewGameButton />
+            <WordInput wordInputChange={this.wordInputChange} wordInput={this.state.wordInput}/>
+            <NewGameButton startGame={this.startGame}/>
           </div>
           <div>
-            <HangmanPicture />
+            <HangmanPicture hangmanState={this.state.hangmanState}/>
           </div>
           <div>
-            <WordDisplay />
+            <WordDisplay wordDisplay={this.state.wordDisplay.join(' ')}/>
             <LetterInput />
             <LetterSubmitButton />
           </div>
-
-
-
         </div>
       </div >
     );
+  }
+
+  wordInputChange = (event) => {
+    this.setState({
+      wordInput: event.target.value
+    })
+  }
+
+  startGame = (event) => {
+    event.preventDefault();
+    this.setState({
+      wordInput: '',
+      word: this.state.wordInput.split(''),
+      wordDisplay: '_'.repeat(this.state.wordInput.length).split('')
+    })
+  }
+
+  letterInputChange = (event) => {
+    const letter = event.target.value;
   }
 }
 

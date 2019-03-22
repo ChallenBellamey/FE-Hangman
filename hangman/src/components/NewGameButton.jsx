@@ -1,5 +1,5 @@
 import React from 'react';
-const NewGameButton = () => {
-    return <button className="button-primary">Start Game</button>
+const NewGameButton = (props) => {
+    return <button className="button-primary" onClick={props.startGame}>Start Game</button>
 }
 export default NewGameButton;

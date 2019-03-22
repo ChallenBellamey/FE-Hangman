@@ -1,7 +1,9 @@
 import React from 'react';
 const WordInput = (props) => {
     return <label >
-        Word Input <input></input>
+        <form>
+            Word Input: <input onChange={props.wordInputChange} value={props.wordInput}></input>
+        </form>
     </label>
 }
 

@@ -1,8 +1,8 @@
 import React from 'react';
 
-const WordDisplay = () => {
+const WordDisplay = (props) => {
     return <div className='box'>
-        <h2> _ _ b _ _ _</h2>
+        <p>{props.wordDisplay}</p>
     </div>
 }
 
