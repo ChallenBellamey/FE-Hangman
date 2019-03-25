@@ -8,6 +8,7 @@ import HangmanPicture from './components/HangmanPicture';
 import WordDisplay from './components/WordDisplay';
 import LetterInput from './components/LetterInput';
 import LetterSubmitButton from './components/LetterSubmitButton';
+import EndGameMessage from './components/EndGameMessage';
 
 class App extends Component {
   state = {
@@ -20,25 +21,44 @@ class App extends Component {
   }
 
   render() {
-    return (
-      <div className="App">
-        <div className='App-header'>
-          <div >
-            <Header />
-            <WordInput wordInputChange={this.wordInputChange} wordInput={this.state.wordInput}/>
-            <NewGameButton startGame={this.startGame}/>
+    const playerWins = this.state.word.every(char => this.state.guessedChars.includes(char));
+    const playerLoses = this.state.hangmanState >= 10;
+    if (playerWins && this.state.word.length > 0 || playerLoses) {
+      return (
+        <div className="App">
+          <div className='App-header'>
+            <div >
+              <Header />
+              <WordInput wordInputChange={this.wordInputChange} wordSubmit={this.startGame} wordInput={this.state.wordInput}/>
+            </div>
+            <div>
+              <HangmanPicture hangmanState={this.state.hangmanState}/>
+            </div>
+            <div>
+              <EndGameMessage playerWins={playerWins} playerLoses={playerLoses}/>
+            </div>
           </div>
-          <div>
-            <HangmanPicture hangmanState={this.state.hangmanState}/>
+        </div >
+      )
+    } else {
+      return (
+        <div className="App">
+          <div className='App-header'>
+            <div >
+              <Header />
+              <WordInput wordInputChange={this.wordInputChange} wordSubmit={this.startGame} wordInput={this.state.wordInput}/>
+            </div>
+            <div>
+              <HangmanPicture hangmanState={this.state.hangmanState}/>
+            </div>
+            <div>
+              <WordDisplay wordDisplay={this.state.wordDisplay.join(' ')}/>
+              <LetterInput letterInputChange={this.letterInputChange} letterSubmit={this.letterSubmit} letterInput={this.state.letterInput}/>
+            </div>
           </div>
-          <div>
-            <WordDisplay wordDisplay={this.state.wordDisplay.join(' ')}/>
-            <LetterInput letterInputChange={this.letterInputChange} letterInput={this.state.letterInput}/>
-            <LetterSubmitButton letterSubmit={this.letterSubmit}/>
-          </div>
-        </div>
-      </div >
-    );
+        </div >
+      )
+    }
   }
 
   wordInputChange = (event) => {
@@ -52,7 +72,10 @@ class App extends Component {
     this.setState({
       wordInput: '',
       word: this.state.wordInput.split(''),
-      wordDisplay: '_'.repeat(this.state.wordInput.length).split('')
+      wordDisplay: '_'.repeat(this.state.wordInput.length).split(''),
+      guessedChars: [],
+      hangmanState: 0,
+      letterInput: ''
     })
   }
 
@@ -66,19 +89,25 @@ class App extends Component {
     event.preventDefault();
     const newLetter = this.state.letterInput;
     if (this.state.word.includes(newLetter)) {
-      // change word display to reveal new letters
+      if (!this.state.guessedChars.includes(newLetter)) {
+        this.setState(prevState => {
+        return {
+          letterInput: '',
+          guessedChars: [...prevState.guessedChars, newLetter]
+        }})
+        this.refreshWordDisplay();
+      }
+    } else {
       this.setState(prevState => {
         return {
-          guessedChars: [...prevState.guessedChars, newLetter]
+          letterInput: '',
+          hangmanState: prevState.hangmanState + 1
         }
       })
-      this.refreshDisplay();
-    } else {
-      // add stage to hangman
     }
   }
 
-  refreshDisplay = () => {
+  refreshWordDisplay = () => {
     this.setState(prevState => {
       return {
         wordDisplay: prevState.word.map(char => {
@@ -89,9 +118,8 @@ class App extends Component {
           }
         })
       }
-  })
-}
-
+    })
+  }
 }
 
 export default App;
