@@ -1,5 +1,5 @@
 import React from 'react';
-const LetterSubmitButton = () => {
-    return <button className="button-primary">Submit letter</button>
+const LetterSubmitButton = (props) => {
+    return <button className="button-primary" onClick={props.letterSubmit}>Submit letter</button>
 }
 export default LetterSubmitButton;

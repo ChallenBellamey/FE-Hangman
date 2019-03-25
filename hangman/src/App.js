@@ -15,7 +15,8 @@ class App extends Component {
     word: [],
     wordDisplay: [],
     guessedChars: [],
-    hangmanState: 0
+    hangmanState: 0,
+    letterInput: ''
   }
 
   render() {
@@ -32,8 +33,8 @@ class App extends Component {
           </div>
           <div>
             <WordDisplay wordDisplay={this.state.wordDisplay.join(' ')}/>
-            <LetterInput />
-            <LetterSubmitButton />
+            <LetterInput letterInputChange={this.letterInputChange} letterInput={this.state.letterInput}/>
+            <LetterSubmitButton letterSubmit={this.letterSubmit}/>
           </div>
         </div>
       </div >
@@ -56,8 +57,41 @@ class App extends Component {
   }
 
   letterInputChange = (event) => {
-    const letter = event.target.value;
+    this.setState({
+      letterInput: event.target.value
+    })
   }
+
+  letterSubmit = (event) => {
+    event.preventDefault();
+    const newLetter = this.state.letterInput;
+    if (this.state.word.includes(newLetter)) {
+      // change word display to reveal new letters
+      this.setState(prevState => {
+        return {
+          guessedChars: [...prevState.guessedChars, newLetter]
+        }
+      })
+      this.refreshDisplay();
+    } else {
+      // add stage to hangman
+    }
+  }
+
+  refreshDisplay = () => {
+    this.setState(prevState => {
+      return {
+        wordDisplay: prevState.word.map(char => {
+          if (prevState.guessedChars.includes(char)) {
+            return char;
+          } else {
+            return '_';
+          }
+        })
+      }
+  })
+}
+
 }
 
 export default App;
