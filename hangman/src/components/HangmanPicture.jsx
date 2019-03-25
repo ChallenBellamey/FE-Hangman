@@ -18,7 +18,7 @@ const hangmanImages = [
 ];
 
 const HangmanPicture = (props) => {
-    return <img src={hangmanImages[props.hangmanState]}></img>
+    return <img src={hangmanImages[props.hangmanState]} alt={'Something went wrong.'}></img>
 };
 
 export default HangmanPicture;
