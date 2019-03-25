@@ -2,7 +2,7 @@ import React from 'react';
 
 const WordDisplay = (props) => {
     return <div className='box'>
-        <p>{props.wordDisplay}</p>
+        <pre>{props.wordDisplay}</pre>
     </div>
 }
 

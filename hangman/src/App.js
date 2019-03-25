@@ -15,13 +15,13 @@ class App extends Component {
     wordInput: '',
     word: [],
     wordDisplay: [],
-    guessedChars: [],
+    guessedChars: [' '],
     hangmanState: 0,
     letterInput: ''
   }
 
   render() {
-    const playerWins = this.state.word.every(char => this.state.guessedChars.includes(char));
+    const playerWins = this.state.word.every(char => this.state.guessedChars.includes(char.toLowerCase()));
     const playerLoses = this.state.hangmanState >= 10;
     if (playerWins && this.state.word.length > 0 || playerLoses) {
       return (
@@ -72,11 +72,11 @@ class App extends Component {
     this.setState({
       wordInput: '',
       word: this.state.wordInput.split(''),
-      wordDisplay: '_'.repeat(this.state.wordInput.length).split(''),
-      guessedChars: [],
+      guessedChars: [' '],
       hangmanState: 0,
       letterInput: ''
     })
+    this.refreshWordDisplay();
   }
 
   letterInputChange = (event) => {
@@ -87,31 +87,27 @@ class App extends Component {
 
   letterSubmit = (event) => {
     event.preventDefault();
-    const newLetter = this.state.letterInput;
-    if (this.state.word.includes(newLetter)) {
-      if (!this.state.guessedChars.includes(newLetter)) {
-        this.setState(prevState => {
-        return {
-          letterInput: '',
-          guessedChars: [...prevState.guessedChars, newLetter]
-        }})
-        this.refreshWordDisplay();
-      }
-    } else {
+    const newLetter = this.state.letterInput.toLowerCase();
+    if (!this.state.guessedChars.includes(newLetter)) {
       this.setState(prevState => {
         return {
           letterInput: '',
-          hangmanState: prevState.hangmanState + 1
+          guessedChars: [...prevState.guessedChars, newLetter],
+          hangmanState: this.state.word.includes(newLetter) || this.state.word.includes(newLetter.toUpperCase()) ?
+                          prevState.hangmanState :
+                          prevState.hangmanState + 1
         }
       })
+      this.refreshWordDisplay();
     }
   }
 
   refreshWordDisplay = () => {
     this.setState(prevState => {
+      console.log(prevState.word, prevState.guessedChars)
       return {
         wordDisplay: prevState.word.map(char => {
-          if (prevState.guessedChars.includes(char)) {
+          if (prevState.guessedChars.includes(char.toLowerCase())) {
             return char;
           } else {
             return '_';
